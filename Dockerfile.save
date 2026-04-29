@@ -1,0 +1,8 @@
+# Specify the base image (the foundation)
+FROM alpine:latest
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Define the command that runs when the container starts
+CMD ["echo", "You have successfully created your first Docker image!"]

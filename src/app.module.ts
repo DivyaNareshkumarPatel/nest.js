@@ -8,9 +8,19 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { MyLoggerModule } from './my-logger/my-logger.module';
 import { AuthModule } from './auth/auth.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, EmployeesModule, ThrottlerModule.forRoot([{ name: 'short', ttl: 1000, limit: 3 }, { name: 'long', ttl: 60000, limit: 100 }]), MyLoggerModule, AuthModule],
+  imports: [UsersModule,
+    DatabaseModule,
+    EmployeesModule,
+    ThrottlerModule.forRoot([{ name: 'short', ttl: 1000, limit: 3 }, { name: 'long', ttl: 60000, limit: 100 }]),
+    MyLoggerModule,
+    AuthModule,
+    CacheModule.register({
+      max: 100,
+      ttl: 0
+    })],
   controllers: [AppController],
   providers: [AppService, {
     provide: APP_GUARD,
