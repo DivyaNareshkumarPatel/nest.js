@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { LazyModuleLoader } from '@nestjs/core';
 
@@ -37,6 +37,26 @@ export class AppController {
       success: true,
       status: 200,
       data
+    }
+  }
+
+  @Delete('cache/:key')
+  async deleteCacheKey(@Param('key') key: string) {
+    await this.appService.deleteCacheKey(key);
+    return {
+      success: true,
+      status: 200,
+      message: 'Key deleted successfully'
+    }
+  }
+
+  @Delete('cache')
+  async clearCacheKey() {
+    await this.appService.clearCacheKey();
+    return {
+      success: true,
+      status: 200,
+      message: 'Cache cleared successfully'
     }
   }
 }

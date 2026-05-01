@@ -9,6 +9,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { MyLoggerModule } from './my-logger/my-logger.module';
 import { AuthModule } from './auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import KeyvRedis from '@keyv/redis';
 
 @Module({
   imports: [UsersModule,
@@ -17,9 +18,15 @@ import { CacheModule } from '@nestjs/cache-manager';
     ThrottlerModule.forRoot([{ name: 'short', ttl: 1000, limit: 3 }, { name: 'long', ttl: 60000, limit: 100 }]),
     MyLoggerModule,
     AuthModule,
-    CacheModule.register({
-      max: 100,
-      ttl: 0
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: () => {
+        const redisUrl = `redis://${process.env.REDIS_HOST || '172.17.0.2'}:${process.env.REDIS_PORT || '6379'}`;
+        return {
+          stores: [new KeyvRedis(redisUrl)],
+          ttl: 0
+        };
+      }
     })],
   controllers: [AppController],
   providers: [AppService, {

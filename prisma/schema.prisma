@@ -4,8 +4,9 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+  output        = "../src/generated/prisma"
 }
 
 // prisma/schema.prisma
@@ -14,7 +15,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Employee{
+model Employee {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
@@ -23,7 +24,7 @@ model Employee{
   updatedAt DateTime @updatedAt
 }
 
-enum Role{
+enum Role {
   INTERN
   ENGINEER
   ADMIN

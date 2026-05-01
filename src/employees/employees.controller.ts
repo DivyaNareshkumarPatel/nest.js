@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Ip } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Ip, UseInterceptors } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { Prisma } from '../generated/prisma';
 import { Throttle, SkipThrottle } from '@nestjs/throttler';
 import { MyLoggerService } from 'src/my-logger/my-logger.service';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 
 @SkipThrottle()
 @Controller('employees')
+@UseInterceptors(CacheInterceptor)
 export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) { }
   private readonly logger = new MyLoggerService(EmployeesController.name)
@@ -17,6 +19,7 @@ export class EmployeesController {
 
   @SkipThrottle({ default: false })
   @Get()
+  @CacheKey('all_employees')
   findAll(@Ip() ip: string, @Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
     this.logger.log(`Request for all employees from IP: ${ip}`, EmployeesController.name)
     return this.employeesService.findAll(role);
